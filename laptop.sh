@@ -86,9 +86,6 @@ case "$SHELL" in
     ;;
 esac
 
-# SF Mono
-cp -R /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/. ~/Library/Fonts/
-
 # Symlinks
 (
   cd "$LAPTOP/dotfiles"
@@ -98,12 +95,13 @@ cp -R /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/. ~/Library/
 
   ln -sf "$PWD/editor/vimrc" "$HOME/.vimrc"
 
+  mkdir -p "$HOME/.vim/colors"
   mkdir -p "$HOME/.vim/ftdetect"
   mkdir -p "$HOME/.vim/ftplugin"
   mkdir -p "$HOME/.vim/syntax"
   (
     cd editor/vim
-    for f in {ftdetect,ftplugin,syntax}/*; do
+    for f in {colors,ftdetect,ftplugin,syntax}/*; do
       ln -sf "$PWD/$f" "$HOME/.vim/$f"
     done
   )
