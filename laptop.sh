@@ -60,6 +60,7 @@ brew "vim"
 brew "watch"
 brew "zsh"
 
+cask "alacritty"
 cask "iterm2" # kitty replacement until M1 support
 # cask "kitty" no M1 support yet
 cask "ngrok"
@@ -121,6 +122,9 @@ esac
   ln -sf "$PWD/ruby/gemrc" "$HOME/.gemrc"
   ln -sf "$PWD/ruby/irbrc" "$HOME/.irbrc"
   ln -sf "$PWD/ruby/rspec" "$HOME/.rspec"
+
+  mkdir -p "$HOME/.config/alacritty"
+  ln -sf "$PWD/shell/alacritty.yml" "$HOME/.config/alacritty/alacritty.yml"
 
   mkdir -p "$HOME/.config/kitty"
   ln -sf "$PWD/shell/kitty.conf" "$HOME/.config/kitty/kitty.conf"

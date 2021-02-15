@@ -1,0 +1,20 @@
+# https://github.com/alacritty/alacritty/blob/master/alacritty.yml
+colors:
+  primary:
+    background: '#ffffff'
+    foreground: '#000000'
+  cursor:
+    text: '#000000'
+    cursor: '#cccccc'
+window:
+  padding:
+    x: 5
+    y: 5
+  startup_mode: Maximized
+font:
+  normal:
+    family: SF Mono
+    style: Light
+  size: 16.0
+  offset:
+    y: 5
