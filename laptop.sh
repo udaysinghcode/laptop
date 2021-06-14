@@ -39,32 +39,38 @@ tap "heroku/brew"
 tap "homebrew/services"
 tap "planetscale/tap"
 
+# cloud services
 brew "awscli"
+brew "gh"
+brew "heroku"
+brew "mysql-client"           # for PlanetScale
+brew "pscale"
+cask "ngrok"
+
+# vim
 brew "bat"
 brew "fzf"
-brew "gh"
-brew "git"
-brew "go"
-brew "heroku"
-brew "jq"
-brew "libyaml"
-brew "mysql-client"
-brew "node"
-brew "openssl"
+brew "luajit", args: ["HEAD"] # for NeoVim
+brew "neovim", args: ["HEAD"]
 brew "pgformatter"
-brew "pscale"
 brew "shellcheck"
+brew "vim"
+
+# languages
+brew "go"
+brew "libyaml"                # for Ruby
+brew "node"
+brew "openssl"                # for Ruby, Python
+
+# shell
+brew "git"
+brew "jq"
 brew "the_silver_searcher"
 brew "tldr"
 brew "tmux"
 brew "tree"
-brew "vim"
 brew "watch"
 brew "zsh"
-
-cask "ngrok"
-cask "r"
-cask "rstudio"
 EOF
 
 brew upgrade
@@ -110,6 +116,9 @@ esac
 (
   ln -sf "$PWD/asdf/asdfrc" "$HOME/.asdfrc"
   ln -sf "$PWD/asdf/tool-versions" "$HOME/.tool-versions"
+
+  mkdir -p "$HOME/.config/nvim"
+  ln -sf "$PWD/vim/nvim.vim" "$HOME/.config/nvim/init.vim"
 
   ln -sf "$PWD/vim/vimrc" "$HOME/.vimrc"
 
@@ -185,6 +194,15 @@ fi
 asdf plugin-update "ruby"
 asdf install ruby 2.7.3
 asdf install ruby 3.0.1
+
+# Neovim
+if [ -e "$HOME/.local/share/nvim/site/autoload/plug.vim" ]; then
+  nvim -u "$HOME/.config/nvim/init.vim" +PlugUpgrade +qa
+else
+  curl -fLo "$HOME/.local/share/nvim/site/autoload/plug.vim" --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
+vim -u "$HOME/.vimrc" +PlugUpdate +PlugClean! +qa
 
 # Vim
 if [ -e "$HOME/.vim/autoload/plug.vim" ]; then

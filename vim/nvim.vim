@@ -1,0 +1,236 @@
+" review https://github.com/mitchellh/vim-misc for ideas
+" possibly use https://github.com/nvim-telescope/telescope.nvim
+
+let mapleader = " "   " Spacebar
+
+set autoindent
+set autowrite         " Automatically :write before running commands
+set backspace=2       " Backspace deletes like most programs in insert mode
+set cmdheight=2
+set complete+=kspell  " Include spellfile in completion results
+set diffopt+=vertical " Always use vertical diffs
+set encoding=utf-8
+set expandtab
+set exrc              " http://andrew.stwrt.ca/posts/project-specific-vimrc/
+set hidden            " TextEdit might fail if hidden is not set
+set history=50
+set incsearch
+set laststatus=2      " Always display status line
+set list listchars=tab:»·,trail:·,nbsp:·
+set modelines=0       " Disable modelines as a security precaution
+set nobackup
+set nojoinspaces      " Use one space, not two, after punctuation
+set nomodeline        " Disable modelines as a security precaution
+set noswapfile
+set nowritebackup
+set number
+set numberwidth=5
+set ruler             " Show cursor position all the time
+set shiftround
+set shiftwidth=2
+set shortmess+=c      " Don't pass messages to |ins-completion-menu|
+set showcmd           " Display incomplete commands
+set signcolumn=yes
+set splitbelow
+set splitright
+set tabstop=2
+set textwidth=80
+set updatetime=300
+
+if &compatible
+  set nocompatible
+end
+
+" Open vim-plug without a vertical split
+let g:plug_window='enew'
+
+call plug#begin('~/.vim/plugged')
+  " :help ale
+  Plug 'dense-analysis/ale'
+
+  " auto-create non-existent dir on save
+  Plug 'pbrisbin/vim-mkdir'
+
+  " auto-add end in Ruby, other langs
+  Plug 'tpope/vim-endwise'
+
+  " :help projectionist, .projections.json, :A
+  Plug 'tpope/vim-projectionist'
+
+  " :TestFile, :TestNearest
+  Plug 'janko-m/vim-test'
+
+  " Comment/uncomment <Ctrl><Shift><-><Ctrl><Shift><->
+  Plug 'tomtom/tcomment_vim'
+
+  " :Rename
+  Plug 'tpope/vim-eunuch'
+
+  " :Gblame
+  Plug 'tpope/vim-fugitive'
+
+  " Markdown tables, <Leader>| align table
+  Plug 'junegunn/vim-easy-align'
+
+  " Frontend
+  Plug 'evanleck/vim-svelte'
+  Plug 'jparise/vim-graphql'
+  Plug 'leafgarland/typescript-vim'
+  Plug 'mxw/vim-jsx'
+  Plug 'pangloss/vim-javascript'
+
+  " Go
+  Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+
+  " Ruby
+  Plug 'tpope/vim-rails'
+  Plug 'vim-ruby/vim-ruby'
+call plug#end()
+
+" When reading a buffer, jump to last known cursor position except for
+" commit messages, when position is invalid, or inside an event handler.
+augroup lastcursorposition
+  autocmd!
+
+  autocmd BufReadPost *
+    \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal g`\"" |
+    \ endif
+augroup END
+
+" Lint with ALE
+augroup ale
+  autocmd!
+
+  autocmd VimEnter *
+    \ let g:ale_lint_on_enter = 1 |
+    \ let g:ale_lint_on_text_changed = 0
+augroup END
+
+" https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions
+let g:coc_global_extensions = [
+  \ 'coc-css',
+  \ 'coc-deno',
+  \ 'coc-git',
+  \ 'coc-go',
+  \ 'coc-html',
+  \ 'coc-prettier',
+  \ 'coc-svelte',
+  \ 'coc-tsserver'
+  \ ]
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Docs
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+" Disable spelling by default, enable per-filetype
+autocmd BufRead setlocal nospell
+
+" Search file contents
+nmap \ :Ag<SPACE>
+set grepprg=ag\ --nogroup\ --nocolor
+
+" bind K to grep word under cursor
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+" Switch between the last two files
+nnoremap <Leader><Leader> <C-^>
+
+" Run tests
+nnoremap <silent> <Leader>t :TestFile<CR>
+nnoremap <silent> <Leader>s :TestNearest<CR>
+
+" Test && Commit || Revert
+nnoremap <silent> <Leader>c :!clear && tcr<CR>
+
+" Move between windows
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" Colors
+hi clear
+if version > 580
+  if exists("syntax_on")
+    syntax reset
+  endif
+endif
+
+" Show all syntax groups
+" :so $VIMRUNTIME/syntax/hitest.vim
+
+" Black
+hi IncSearch      ctermfg=16  ctermbg=189
+hi Label          ctermfg=16
+hi MatchParen     ctermfg=16  ctermbg=189
+hi Normal         ctermfg=16  ctermbg=231
+hi Pmenu          ctermfg=16  ctermbg=231
+hi PmenuSbar      ctermfg=16  ctermbg=231
+hi PmenuThumb     ctermfg=16  ctermbg=231
+hi Search         ctermfg=16  ctermbg=189
+hi Statement      ctermfg=16
+hi StorageClass   ctermfg=16
+hi Structure      ctermfg=16
+hi TypeDef        ctermfg=16
+hi Underlined     ctermfg=16 cterm=NONE
+hi rubyDefine     ctermfg=16
+hi rubyMacro      ctermfg=16
+hi rubyValidation ctermfg=16
+
+" Light gray
+hi Comment        ctermfg=250
+hi Cursor         ctermfg=250 ctermbg=238
+hi CursorLineNr   ctermfg=250 ctermbg=253
+hi Error          ctermfg=250 ctermbg=231
+hi Folded         ctermfg=250 ctermbg=255
+hi Ignore         ctermfg=250
+hi LineNr         ctermfg=250 ctermbg=255
+hi NonText        ctermfg=250 ctermbg=255
+hi PmenuSel       ctermfg=250 ctermbg=238
+hi PreProc        ctermfg=250
+hi SpecialKey     ctermfg=250 ctermbg=231
+hi StatusLine     ctermfg=250 ctermbg=255
+hi StatusLineNC   ctermfg=250 ctermbg=255
+hi TabLine        ctermfg=250 ctermbg=253
+hi TabLineFill    ctermfg=250 ctermbg=253
+hi TabLineSel     ctermfg=250
+hi Todo           ctermfg=250 ctermbg=231
+hi VertSplit      ctermfg=250 ctermbg=250
+hi Visual         ctermfg=250 ctermbg=61
+hi VisualNOS      ctermfg=250 ctermbg=24
+hi gitCommitDiff  ctermfg=250
+
+" Pink
+hi CocErrorSign   ctermfg=161
+hi CocInfoSign    ctermfg=161
+hi CocWarningSign ctermfg=161
+hi DiffDelete     ctermfg=161
+hi Directory      ctermfg=161
+hi ErrorMsg       ctermfg=161 ctermbg=231
+hi Function       ctermfg=161 ctermbg=231
+hi ModeMsg        ctermfg=161
+hi MoreMsg        ctermfg=161
+hi SpecialKey     ctermfg=161
+hi Search         ctermfg=161 ctermbg=231
+hi String         ctermfg=161
+hi Title          ctermfg=161
+hi WarningMsg     ctermfg=161
+hi diffRemoved    ctermfg=161
+hi rubySymbol     ctermfg=161
+
+" Turquoise
+hi CocHintSign     ctermfg=30
+hi CocMarkdownLink ctermfg=30
+hi Constant        ctermfg=30
+hi DiffAdd         ctermfg=30 ctermbg=194
+hi Identifier      ctermfg=30
+hi Number          ctermfg=30
+hi Special         ctermfg=30
+hi Type            ctermfg=30
+hi WildMenu        ctermfg=30 ctermbg=60
+hi diffAdded       ctermfg=30
